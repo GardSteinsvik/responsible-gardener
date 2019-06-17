@@ -1,0 +1,1 @@
+python3 ../mpy-miniterm/mpy-miniterm.py /dev/tty.usbserial-1430 --sync-dir src/ --delete

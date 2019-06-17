@@ -1,0 +1,116 @@
+.padding {
+    padding: 6.4rem;
+}
+
+.card {
+    position: relative;
+    height: 8rem;
+    width: 8rem;
+}
+
+.petals {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+    animation: rotation 8s linear infinite;
+}
+
+.petalsBack {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: -2;
+    transform: scale(1.1) rotate(0.05turn);
+}
+
+.petal {
+    height: 6rem;
+    width: 6rem;
+    border-radius: 6rem;
+    background-color: gold;
+    background: radial-gradient(gold, goldenrod);
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    transform-origin: center;
+}
+
+.center {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    color: white;
+    background: radial-gradient(closest-side, saddlebrown, sienna, saddlebrown);
+    height: 100%;
+    width: 100%;
+    border-radius: 100%;
+    animation: pulse 3s ease-in-out infinite alternate;
+}
+
+.p1 {
+    transform: rotate(0turn) translateY(-95%) scale(0.4, 1);
+}
+
+.p2 {
+    transform: rotate(0.1turn) translateY(-95%) scale(0.4, 1);
+}
+
+.p3 {
+    transform: rotate(0.2turn) translateY(-95%) scale(0.4, 1);
+}
+
+.p4 {
+    transform: rotate(0.3turn) translateY(-95%) scale(0.4, 1);
+}
+
+.p5 {
+    transform: rotate(0.4turn) translateY(-95%) scale(0.4, 1);
+}
+
+.p6 {
+    transform: rotate(0.5turn) translateY(-95%) scale(0.4, 1);
+}
+
+.p7 {
+    transform: rotate(0.6turn) translateY(-95%) scale(0.4, 1);
+}
+
+.p8 {
+    transform: rotate(0.7turn) translateY(-95%) scale(0.4, 1);
+}
+
+.p9 {
+    transform: rotate(0.8turn) translateY(-95%) scale(0.4, 1);
+}
+
+.p10 {
+    transform: rotate(0.9turn) translateY(-95%) scale(0.4, 1);
+}
+
+@keyframes rotation {
+    from {
+        transform: scale(1.2) rotate(0);
+    }
+    50% {
+        transform: scale(1) rotate(0.5turn);
+    }
+    to {
+        transform: scale(1.2) rotate(1turn);
+    }
+}
+
+@keyframes pulse {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.2);
+    }
+}
+
