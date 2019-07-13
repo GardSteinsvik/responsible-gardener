@@ -12,6 +12,9 @@ esp.osdebug(None)
 import gc
 gc.collect()
 
+pump = Pin(15, Pin.OUT) # 5V D8
+pump.off()
+
 ssid = 'HideYourKidsHideYourWifi2'
 password = 'wegonfindyou'
 
