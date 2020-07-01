@@ -2,19 +2,19 @@ import React from 'react'
 import styles from './Button.module.css'
 import classNames from 'classnames'
 
-const Button = (props) => {
+const Button = ({className, inProgress, onClick, disabled, children}) => {
 
     return (
         <button
             className={classNames(
-                props.className,
+                className,
                 styles.button,
-                props.inProgress && styles.inProgress,
+                inProgress && styles.inProgress,
             )}
-            onClick={props.onClick}
-            disabled={props.disabled || props.inProgress}
+            onClick={onClick}
+            disabled={disabled || inProgress}
         >
-            {props.children}
+            {children}
         </button>
     )
 }

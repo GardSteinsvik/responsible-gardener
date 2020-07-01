@@ -103,4 +103,6 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+esp8266*.bin
+
 \.DS_Store

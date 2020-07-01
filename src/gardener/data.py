@@ -50,3 +50,19 @@ def set_water_amount(water_amount):
         f.close()
     except Exception as identifier:
         print(identifier)
+
+
+def get_pump_state():
+    try:
+        f = open('pump_state.txt', 'r')
+        return f.read()
+    except Exception as identifier:
+        print(identifier)
+
+def set_pump_state(state):
+    try:
+        f = open('pump_state.txt', 'w')
+        f.write(state)
+        f.close()
+    except Exception as identifier:
+        print(identifier)

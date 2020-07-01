@@ -3,27 +3,14 @@ import classNames from 'classnames'
 import styles from './Sunflower.module.css'
 
 export const Sunflower = (props) => {
+    const {moisture} = props
 
-    console.log(props.moisture)
-
-    const moistureHue = !!props.moisture ? ({filter: `hue-rotate(${props.moisture-10}deg)`}) : ({})
-    console.log(moistureHue)
-
-    const petalGrayscale = !!props.moisture ? ({filter: `grayscale(${(70-props.moisture)}%)`}) : ({})
-    console.log(petalGrayscale)
+    const moistureHue = !!moisture ? ({filter: `hue-rotate(${moisture-10}deg)`}) : ({})
+    const petalGrayscale = !!moisture ? ({filter: `grayscale(${(70-moisture)}%)`}) : ({})
 
     const petals = (
         <React.Fragment>
-            <div className={classNames(styles.petal, styles.p1)}/>
-                <div className={classNames(styles.petal, styles.p2)}/>
-                <div className={classNames(styles.petal, styles.p3)}/>
-                <div className={classNames(styles.petal, styles.p4)}/>
-                <div className={classNames(styles.petal, styles.p5)}/>
-                <div className={classNames(styles.petal, styles.p6)}/>
-                <div className={classNames(styles.petal, styles.p7)}/>
-                <div className={classNames(styles.petal, styles.p8)}/>
-                <div className={classNames(styles.petal, styles.p9)}/>
-                <div className={classNames(styles.petal, styles.p10)}/>
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => <div key={i} className={classNames(styles.petal, styles[`p${i}`])}/>)}
         </React.Fragment>
     )
 

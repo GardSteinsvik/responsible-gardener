@@ -1,7 +1,6 @@
 import ure as re
 import uerrno
 
-
 def unquote_plus(string):
     string = string.replace('+', ' ')
     arr = string.split('%')
@@ -61,8 +60,11 @@ def jsonify(writer, pydict):
     yield from writer.awrite(ujson.dumps(pydict))
 
 
-def start_response(writer, content_type='text/html', status='200', headers=None):
-    yield from writer.awrite('HTTP/1.0 %s NA\r\n' % status)
+def start_response(writer, content_type='text/plain', status='200', headers=None):
+    yield from writer.awrite('HTTP/1.1 %s NA\r\n' % status)
+    yield from writer.awrite('Access-Control-Allow-Origin: *\r\n')
+    yield from writer.awrite('Access-Control-Allow-Methods: *\r\n')
+    yield from writer.awrite('Access-Control-Allow-Headers: Content-Type\r\n')
     yield from writer.awrite('Content-Type: ')
     yield from writer.awrite(content_type)
     if not headers:
@@ -86,6 +88,12 @@ def http_error(writer, status):
 
 
 class HTTPRequest(object):
+    def read_json_data(self):
+        import ujson
+        size = int(self.headers[b'Content-Length'])
+        data = yield from self.reader.read(size)
+        json_data = ujson.loads(data.decode())
+        self.form = json_data
 
     def read_form_data(self):
         size = int(self.headers[b'Content-Length'])
@@ -183,7 +191,11 @@ class WebApp(object):
                 req.reader = reader
                 close = yield from handler(req, writer)
             else:
-                yield from self.abort(writer, '404')
+                if method == 'OPTIONS':
+                    yield from self.abort(writer, '200')
+                else:
+                    yield from self.abort(writer, '404')
+                    
         except Exception as e:
             pass
 
@@ -199,9 +211,6 @@ class WebApp(object):
             self.url_map.append((url, f, kwargs))
             return f
         return _route
-
-    def add_url_rule(self, url, func, **kwargs):
-        self.url_map.append((url, func, kwargs))
 
     def sendfile(self, writer, fname, content_type=None, headers=None):
         if not content_type:

@@ -26,9 +26,6 @@ p {
     opacity: 0;
     letter-spacing: -0.3em;
   }
-  90% {
-    opacity: 1;
-  }
   to {
     letter-spacing: 0;
     transform: translateY(0);

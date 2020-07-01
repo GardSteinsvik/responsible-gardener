@@ -15,8 +15,8 @@ gc.collect()
 pump = Pin(15, Pin.OUT) # 5V D8
 pump.off()
 
-ssid = 'HideYourKidsHideYourWifi2'
-password = 'wegonfindyou'
+ssid = 'Nice try...'
+password = '...Trond'
 
 station = network.WLAN(network.STA_IF)
 
