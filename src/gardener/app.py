@@ -46,7 +46,6 @@ def moisture_resource(reqeust, response):
 
 @webapp.route('/pump/lock', method='POST')
 def pump_command(request, response):
-    print('Setting pump lock')
     global pump_lock
     pump_lock = True
     gc.collect()
@@ -55,14 +54,12 @@ def pump_command(request, response):
 
 @webapp.route('/pump/on', method='POST')
 def pump_command(request, response):
-    print('Setting pump state to "on"')
     set_pump_state('on')
     yield from jsonify(response, {'status': 200})
 
 
 @webapp.route('/pump/off', method='POST')
 def pump_command(request, response):
-    print('Setting pump state to "off"')
     set_pump_state('off')
     yield from jsonify(response, {'status': 200})
 
@@ -70,7 +67,7 @@ def pump_command(request, response):
 @webapp.route('/pump/start', method='POST')
 def pump_command(request, response):
     water_amount = get_water_amount()
-    print('Opening pump lock. Watering for {} seconds'.format(water_amount))
+    #  print('Opening pump lock. Watering for {} seconds'.format(water_amount))
     global pump_lock
     pump_lock = False
     pump.on()
@@ -79,7 +76,7 @@ def pump_command(request, response):
         consecutive_seconds = consecutive_seconds + 1
         if not pump_lock:
             await uasyncio.sleep(1)
-    print('Stopping pump. Setting pump lock')
+    #  print('Stopping pump. Setting pump lock')
     pump.off()
     pump_lock = True
     gc.collect()
@@ -100,7 +97,6 @@ def water_amount_command(request, response):
     yield from request.read_json_data()
     # yield from request.read_form_data()
     water_amount = request.form['waterAmount']
-    print('Water amount from request: {}'.format(water_amount))
     set_water_amount(water_amount)
     gc.collect()
     yield from jsonify(response, {'status': 200})
@@ -108,38 +104,33 @@ def water_amount_command(request, response):
 
 async def pump_routine():
     while True:
-        print('[Water Routine] Starting.')
+        # print('[Water Routine] Starting.')
 
         will_water = True
         pump_state = get_pump_state()
         now = time.localtime(time.time())
         last_watered = get_last_watered()
 
-        print('[Water Routine] Last watered: {} | Time: {}'.format(
-            last_watered[2], now[2]))
+        # print('[Water Routine] Last watered: {} | Time: {}'.format(last_watered[2], now[2]))
 
         global time_synchronized
         if not time_synchronized:
-            will_water = False
-            print('[Water Routine] Not watering: Time is not synchronized.')
+            will_water = False  # Not watering: Time is not synchronized.
 
         if now[3] != 12:
-            will_water = False
-            print('[Water Routine] Not watering: It is not between 12:00 and 12:59')
+            will_water = False  # Not watering: It is not between 12:00 and 12:59
 
         if pump_state == 'off':
-            will_water = False
-            print('[Water Routine] Not watering: Pump is turned off.')
+            will_water = False  # Not watering: Pump is turned off.
 
         if last_watered[2] == now[2]:
-            will_water = False
-            print('[Water Routine] Not watering: Plant has already been watered today.')
+            will_water = False  # Not watering: Plant has already been watered today.
 
         if will_water:
             global pump_lock
             pump_lock = False
             water_amount = get_water_amount()
-            print('[Water Routine] Starting pump. Watering for {} seconds'.format(water_amount))
+            # print('[Water Routine] Starting pump. Watering for {} seconds'.format(water_amount))
             set_last_watered(now)
             pump.on()
             consecutive_seconds = 0
@@ -149,7 +140,7 @@ async def pump_routine():
                 if not pump_lock:
                     await uasyncio.sleep(1)
 
-            print('[Water Routine] Stopping pump.')
+            # print('[Water Routine] Stopping pump.')
             pump.off()
             pump_lock = True
 
@@ -161,13 +152,11 @@ async def check_moisture():
         raw_value = moisture.read()
         if raw_value <= 10:
             moisture_sensor_disconnected = True
-            print('REEEEE > Moisture sensor disconnected!')
         elif raw_value == 1024:
             moisture_sensor_disconnected = True
-            print('REEEEE > Moisture sensor not shorted!')
         else:
             moisture_value = round(((1024-raw_value)*100/1024), 1)
-            print('Moisture: {} | {}%'.format(raw_value, moisture_value))
+            # print('Moisture: {} | {}%'.format(raw_value, moisture_value))
         await uasyncio.sleep(1)
 
 
@@ -179,7 +168,6 @@ async def set_time():
         global time_synchronized
         try:
             from ntptime import settime
-            print('Setting time from NTP')
             settime()
             time_synchronized = True
         except Exception:
@@ -190,21 +178,10 @@ async def set_time():
         await uasyncio.sleep(1800)
 
 
-async def check_time():
-    while True:
-        now = time.localtime(time.time())
-        time_string = '-'.join(str(x) for x in now)
-        print('Timestring', time_string)
-        parsed = tuple(int(x) for x in time_string.split('-'))
-        print('parsed time', parsed)
-        await uasyncio.sleep(10)
-
-
 def main():
     loop = uasyncio.get_event_loop()
     loop.create_task(set_time())
     loop.create_task(pump_routine())
     # loop.create_task(check_moisture())
-    # loop.create_task(check_time())
     loop.create_task(uasyncio.start_server(webapp.handle, '0.0.0.0', 80))
     loop.run_forever()
